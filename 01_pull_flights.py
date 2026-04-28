@@ -30,8 +30,8 @@ from pathlib import Path
 
 # ---- CONFIG ----
 #FILL IN YOUR INFORMATION NOT MINE
-CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "PASTE_CLIENT_ID_HERE")
-CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "PASTE_CLIENT_SECRET_HERE")
+CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "owenhigin@gmail.com-api-client")
+CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "Nx4YMWTtyhV6yxSOTmbg6FcqiuEgbxTN")
 
 # CUT WINDOW: 6 months for the test run.
 # Once we know this works, we can expand to 12 months (with pooled accounts).
@@ -39,7 +39,7 @@ START_DATE = datetime(2024, 10, 1, tzinfo=timezone.utc)
 END_DATE = datetime(2025, 4, 1, tzinfo=timezone.utc)
 
 # Test mode: only pull the first aircraft. Set to False after verifying.
-TEST_MODE = True
+TEST_MODE = False
 
 # 2-day chunks (OpenSky's enforced limit)
 CHUNK_DAYS = 2
@@ -188,6 +188,16 @@ def main():
 
     df = pd.read_excel(AIRCRAFT_FILE)
     df["icao24"] = df["icao24"].astype(str).str.strip().str.upper()
+    # Focal companies only
+    FOCAL_COMPANIES = ["Liberty Media Corp", "Workday, Inc.", "CENTERPOINT ENERGY INC"]
+    df = df[df["company_name"].isin(FOCAL_COMPANIES)].reset_index(drop=True)
+
+    print(f"Filtered to {len(df)} focal aircraft:")
+    for _, row in df.iterrows():
+        print(f"  {row['company_name']}")
+    if len(df) != 3:
+        print(f"WARNING: expected 3 focal companies, got {len(df)}. Check names match spreadsheet exactly.")
+        return
 
     if TEST_MODE:
         df = df.head(1)
