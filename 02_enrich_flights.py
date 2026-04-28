@@ -1,28 +1,27 @@
 """
-Step 2: Enrich raw OpenSky flights with airport details.
+Step 2: Enrich per-firm flight CSVs with airport details.
 
-OpenSky returns ICAO airport codes (e.g. 'KLAX') for departure and arrival.
-This script joins those against a public airport database to add:
-  - Airport name
-  - City, country
-  - Latitude, longitude
+Reads all per-firm CSVs from raw_flights/ (e.g. N543GL.csv, N765M.csv),
+enriches each with airport name, city, and coordinates from OurAirports,
+and writes <tail>_cleaned.csv alongside the original in raw_flights/.
 
 Uses OurAirports.com's free airports.csv (no API key needed).
-
-Input: flights_all.csv from step 1
-Output: flights_enriched.csv
 """
 
 import pandas as pd
 import requests
+import re
 from pathlib import Path
 from datetime import datetime, timezone
 
-AIRPORTS_URL = "https://davidmegginson.github.io/ourairports-data/airports.csv"
+AIRPORTS_URL   = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 AIRPORTS_LOCAL = Path("airports.csv")
+RAW_DIR        = Path("raw_flights")
+
+MONTHLY_PATTERN = re.compile(r"_\d{4}-\d{2}$")
 
 
-def get_airports_db() -> pd.DataFrame:
+def get_airports_db():
     if not AIRPORTS_LOCAL.exists():
         print("Downloading airports database from OurAirports.com...")
         r = requests.get(AIRPORTS_URL, timeout=60)
@@ -33,16 +32,7 @@ def get_airports_db() -> pd.DataFrame:
                "latitude_deg", "longitude_deg", "type"]]
 
 
-def main():
-    flights = pd.read_csv("flights_all.csv")
-    print(f"Loaded {len(flights)} flights")
-
-    # OpenSky's columns of interest
-    # estDepartureAirport, estArrivalAirport: ICAO codes (sometimes None)
-    # firstSeen, lastSeen: Unix timestamps in seconds
-    # icao24: aircraft hex code
-
-    # Convert timestamps
+def enrich(flights, airports):
     flights["departure_time"] = pd.to_datetime(
         flights["firstSeen"], unit="s", utc=True)
     flights["arrival_time"] = pd.to_datetime(
@@ -51,12 +41,9 @@ def main():
         (flights["lastSeen"] - flights["firstSeen"]) / 60).round(1)
     flights["flight_date"] = flights["departure_time"].dt.date
 
-    # Load airports
-    airports = get_airports_db()
     airports.columns = ["icao", "airport_name", "city",
                         "country", "lat", "lon", "type"]
 
-    # Merge departure
     flights = flights.merge(
         airports.rename(columns={
             "icao": "estDepartureAirport",
@@ -69,8 +56,6 @@ def main():
         }),
         on="estDepartureAirport", how="left",
     )
-
-    # Merge arrival
     flights = flights.merge(
         airports.rename(columns={
             "icao": "estArrivalAirport",
@@ -84,7 +69,6 @@ def main():
         on="estArrivalAirport", how="left",
     )
 
-    # Keep useful columns
     keep = [
         "tail_number", "company_name", "icao24",
         "flight_date", "departure_time", "arrival_time",
@@ -94,16 +78,43 @@ def main():
         "estArrivalAirport", "arr_airport_name", "arr_city",
         "arr_country", "arr_lat", "arr_lon",
     ]
-    keep = [c for c in keep if c in flights.columns]
-    flights[keep].to_csv("flights_enriched.csv", index=False)
-    print(f"Wrote flights_enriched.csv ({len(flights)} rows)")
+    return flights[[c for c in keep if c in flights.columns]]
 
-    # Quick sanity per company
-    print("\nFlights per company:")
-    print(flights.groupby("company_name").size().sort_values(ascending=False))
 
-    print("\nTop 15 destinations across all companies:")
-    print(flights["arr_city"].value_counts().head(15))
+def main():
+    # Find all per-firm CSVs — skip monthly files and already-cleaned files
+    firm_csvs = [
+        f for f in sorted(RAW_DIR.glob("N*.csv"))
+        if not f.stem.endswith("_cleaned")
+        and not MONTHLY_PATTERN.search(f.stem)
+    ]
+
+    if not firm_csvs:
+        print("No per-firm CSVs found in raw_flights/")
+        return
+
+    airports = get_airports_db()
+
+    for csv in firm_csvs:
+        tail = csv.stem
+        out  = RAW_DIR / f"{tail}_cleaned.csv"
+
+        if out.exists():
+            print(f"{tail}: already cleaned — skipping")
+            continue
+
+        flights = pd.read_csv(csv)
+        if flights.empty:
+            print(f"{tail}: empty — skipping")
+            continue
+
+        cleaned = enrich(flights, airports.copy())
+        cleaned.to_csv(out, index=False)
+        print(f"{tail}: {len(cleaned)} flights -> {out}")
+
+        print(f"  Top destinations:")
+        print(cleaned["arr_city"].value_counts().head(5).to_string())
+        print()
 
 
 if __name__ == "__main__":

@@ -30,9 +30,9 @@ from datetime import datetime, timedelta
 # ---- CONFIG ----
 # Map company names to tickers (must match what's in events.csv)
 TICKER_MAP = {
-    "Liberty Media Corp": "FWONA",         # also FWONK; FWONA is voting A shares
-    "Workday Inc": "WDAY",
-    "Newell Brands Inc": "NWL",
+    "NEWELL BRANDS INC.": "NWL",
+    "SKECHERS USA INC":   "SKX",
+    "Macy's, Inc.":       "M",
 }
 
 # Pull a wide window so we have estimation-window data for every event
@@ -211,14 +211,18 @@ def main():
 
     events["filing_date"] = pd.to_datetime(events["filing_date"])
 
-    # Load flights (optional — if not yet available, features will be NaN)
-    flights_path = Path("flights_enriched.csv")
-    flights = None
-    if flights_path.exists():
-        flights = pd.read_csv(flights_path)
-        print(f"Loaded {len(flights)} flights from {flights_path}")
+    # Load flights from per-firm cleaned CSVs
+    cleaned_files = [
+        Path("raw_flights/Clean Data/Newell_Brands_cleaned.csv"),
+        Path("raw_flights/Clean Data/Skechers_cleaned.csv"),
+        Path("raw_flights/Clean Data/Macys_cleaned.csv"),
+    ]
+    parts = [pd.read_csv(f) for f in cleaned_files if f.exists()]
+    flights = pd.concat(parts, ignore_index=True) if parts else None
+    if flights is not None:
+        print(f"Loaded {len(flights)} flights across {flights['company_name'].nunique()} firms")
     else:
-        print(f"WARNING: {flights_path} not found. Flight features will be NaN.")
+        print("WARNING: No cleaned flight files found. Flight features will be NaN.")
 
     # Pull prices and compute returns
     prices = pull_prices()
