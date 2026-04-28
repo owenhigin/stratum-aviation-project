@@ -1,123 +1,23 @@
-filing_date,company_name,ticker,cik,accession_number,item_codes,event_type,description,target_or_counterparty,target_location,include,skip_reason,source_url
-4/24/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000055,5.07,,,,,N,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000055/cnp-20230421.htm
-4/27/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000062,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000062/cnp-20230427.htm
-5/1/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-130489,8.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523130489/d505062d8k.htm
-5/22/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000088,7.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000088/cnp-20230521.htm
-7/26/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000106,5.02,,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000106/cnp-20230721.htm
-7/27/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000111,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000111/cnp-20230727.htm
-8/4/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-203904,"1.01,2.03,3.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523203904/d536903d8k.htm
-8/9/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-207408,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523207408/d527380d8k.htm
-9/1/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-227687,8.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523227687/d532039d8k.htm
-10/3/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000127,"5.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000127/cnp-20230927.htm
-10/16/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-256879,"1.01,2.03,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523256879/d527620d8k.htm
-10/26/23,CenterPoint Energy Inc,CNP,1130310,0001130310-23-000148,"2.02,5.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031023000148/cnp-20231024.htm
-11/20/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-280670,8.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523280670/d486706d8k.htm
-11/30/23,CenterPoint Energy Inc,CNP,1130310,0001193125-23-286309,8.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000119312523286309/d62513d8k.htm
-1/11/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-006148,"1.01,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524006148/d389888d8k.htm
-2/20/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000011,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000011/cnp-20240220.htm
-2/20/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-039277,"1.01,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524039277/d794478d8k.htm
-3/8/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000047,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000047/cnp-20240308.htm
-4/29/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000062,5.07,,,,,N,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000062/cnp-20240426.htm
-4/30/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000067,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000067/cnp-20240430.htm
-5/9/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-135331,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524135331/d816259d8k.htm
-6/24/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-167028,"1.01,2.03,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524167028/d811993d8k.htm
-7/30/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000094,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000094/cnp-20240730.htm
-8/2/24,CenterPoint Energy Inc,CNP,1130310,0001104659-24-085024,"7.01,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000110465924085024/tm2420721d1_8k.htm
-8/8/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-197081,"1.01,8.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524197081/d856526d8k.htm
-8/14/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-200205,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524200205/d857133d8k.htm
-8/28/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000105,"7.01,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000105/cnp-20240828.htm
-8/29/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-209934,"1.01,2.03,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524209934/d846325d8k.htm
-10/28/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000117,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000117/cnp-20241028.htm
-10/31/24,CenterPoint Energy Inc,CNP,1130310,0001193125-24-248084,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000119312524248084/d879591d8k.htm
-11/12/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000119,"7.01,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000119/cnp-20241108.htm
-12/3/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000122,5.02,,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000122/cnp-20241203.htm
-12/16/24,CenterPoint Energy Inc,CNP,1130310,0001130310-24-000125,"5.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031024000125/cnp-20241212.htm
-1/29/25,CenterPoint Energy Inc,CNP,1130310,0001130310-25-000013,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031025000013/cnp-20250129.htm
-2/20/25,CenterPoint Energy Inc,CNP,1130310,0001130310-25-000043,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1130310/000113031025000043/cnp-20250220.htm
-3/18/25,CenterPoint Energy Inc,CNP,1130310,0001130310-25-000065,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1130310/000113031025000065/cnp-20250318.htm
-4/6/23,Liberty Media Corp,FWONA,1560385,0001104659-23-042258,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923042258/tm2232384d20_8k.htm
-4/10/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000013,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000013/lmca-20230406x8k.htm
-5/5/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000015,"2.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000015/lmca-20230502x8k.htm
-5/10/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000017,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000017/lmca-20230509x8k.htm
-6/7/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000021,5.07,,,,,N,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000021/lmca-20230606x8k.htm
-6/12/23,Liberty Media Corp,FWONA,1560385,0001104659-23-070366,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923070366/tm2230730d6_8k.htm
-6/20/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000024,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000024/lmca-20230620x8k.htm
-6/30/23,Liberty Media Corp,FWONA,1560385,0001104659-23-076901,"3.01,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923076901/tm2320270d1_8k.htm
-7/11/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000028,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000028/lmca-20230710x8k.htm
-7/18/23,Liberty Media Corp,FWONA,1560385,0001104659-23-082079,"1.01,2.01,3.01,8.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923082079/tm2320270d4_8k.htm
-7/18/23,Liberty Media Corp,FWONA,1560385,0001104659-23-081846,"5.07,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923081846/tm2320270d3_8k.htm
-7/19/23,Liberty Media Corp,FWONA,1560385,0001104659-23-082394,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923082394/tm2320270d10_8k.htm
-7/21/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000031,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000031/lmca-20230720x8k.htm
-8/3/23,Liberty Media Corp,FWONA,1560385,0001104659-23-087380,"2.03,3.03,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923087380/tm2320270d12_8k.htm
-8/4/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000034,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000034/lmca-20230804x8k.htm
-8/24/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000040,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000040/lmca-20230823x8k.htm
-9/5/23,Liberty Media Corp,FWONA,1560385,0001104659-23-098237,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923098237/tm2325496d1_8k.htm
-9/7/23,Liberty Media Corp,FWONA,1560385,0001104659-23-098794,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923098794/tm2325496d2_8k.htm
-9/14/23,Liberty Media Corp,FWONA,1560385,0001104659-23-100796,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923100796/tm2326141d1_8k.htm
-9/26/23,Liberty Media Corp,FWONA,1560385,0001104659-23-103726,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923103726/tm2326859d1_8k.htm
-10/4/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000043,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000043/lmca-20231004x8k.htm
-10/10/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000046,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000046/lmca-20231006x8k.htm
-10/12/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000048,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000048/lmca-20231012x8k.htm
-10/26/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000050,5.02,,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000050/lmca-20231020x8k.htm
-11/3/23,Liberty Media Corp,FWONA,1560385,0001560385-23-000052,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038523000052/lmca-20231103x8k.htm
-11/9/23,Liberty Media Corp,FWONA,1560385,0001104659-23-116262,7.01,,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923116262/tm2329578d1_8k.htm
-12/12/23,Liberty Media Corp,FWONA,1560385,0001104659-23-125392,"1.01,5.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923125392/tm2332448d1_8k.htm
-12/12/23,Liberty Media Corp,FWONA,1560385,0001104659-23-125188,"8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465923125188/tm2332678d1_8k.htm
-1/19/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000002,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000002/lmca-20240119x8k.htm
-2/28/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000004,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000004/lmca-20240228x8k.htm
-4/1/24,Liberty Media Corp,FWONA,1560385,0001104659-24-041336,"1.01,3.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924041336/tm2410155d1_8k.htm
-4/11/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000006,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000006/lmca-20240410x8k.htm
-5/2/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000008,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000008/lmca-20240430x8k.htm
-5/8/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000010,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000010/lmca-20240508x8k.htm
-5/15/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000012,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000012/lmca-20240514x8k.htm
-6/13/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000015,5.07,,,,,N,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000015/lmca-20240610x8k.htm
-6/17/24,Liberty Media Corp,FWONA,1560385,0001104659-24-071928,"1.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924071928/tm2417389d1_8k.htm
-7/12/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000017,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000017/lmca-20240711x8k.htm
-7/24/24,Liberty Media Corp,FWONA,1560385,0001104659-24-082135,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924082135/tm243546d10_8k.htm
-8/8/24,Liberty Media Corp,FWONA,1560385,0001104659-24-086888,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924086888/tm2421157d1_8k.htm
-8/9/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000019,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000019/lmca-20240808x8k.htm
-8/15/24,Liberty Media Corp,FWONA,1560385,0001104659-24-090055,"5.03,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924090055/tm2421661d1_8k.htm
-8/20/24,Liberty Media Corp,FWONA,1560385,0001104659-24-091285,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924091285/tm2421608d3_8k.htm
-8/21/24,Liberty Media Corp,FWONA,1560385,0001104659-24-091634,"7.01,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924091634/tm2421608d4_8k.htm
-8/23/24,Liberty Media Corp,FWONA,1560385,0001104659-24-092479,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924092479/tm2422514d3_8k.htm
-8/26/24,Liberty Media Corp,FWONA,1560385,0001104659-24-092661,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924092661/tm2422638d1_8k.htm
-8/27/24,Liberty Media Corp,FWONA,1560385,0001104659-24-093102,"3.01,5.07,8.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924093102/tm2422514d1_8k.htm
-9/3/24,Liberty Media Corp,FWONA,1560385,0001104659-24-096059,2.02,,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924096059/tm2423226d1_8k.htm
-9/4/24,Liberty Media Corp,FWONA,1560385,0001104659-24-096654,"8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924096654/tm2422514d9_8k.htm
-9/6/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000021,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000021/lmca-20240906x8k.htm
-9/10/24,Liberty Media Corp,FWONA,1560385,0001104659-24-098251,"2.01,3.01,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924098251/tm2422514d16_8k.htm
-9/20/24,Liberty Media Corp,FWONA,1560385,0001104659-24-101538,"1.01,2.03,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924101538/tm2424432d1_8k.htm
-10/10/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000023,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000023/lmca-20241010x8k.htm
-10/22/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000025,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000025/lmca-20241021x8k.htm
-11/12/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000028,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000028/lmca-20241107x8k.htm
-11/13/24,Liberty Media Corp,FWONA,1560385,0001104659-24-117311,"5.02,7.01,8.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924117311/tm2428305d1_8k.htm
-12/9/24,Liberty Media Corp,FWONA,1560385,0001560385-24-000031,"5.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000031/lmca-20241206x8k.htm
-12/19/24,Liberty Media Corp,FWONA,1560385,0001104659-24-130068,"1.01,7.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924130068/tm2431536d1_8k.htm
-1/8/25,Liberty Media Corp,FWONA,1560385,0001104659-25-002027,"5.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000110465925002027/tm252278d1_8k.htm
-1/31/25,Liberty Media Corp,FWONA,1560385,0001560385-25-000002,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000002/lmca-20250130x8k.htm
-2/24/25,Liberty Media Corp,FWONA,1560385,0001560385-25-000004,"7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000004/lmca-20250221x8k.htm
-2/28/25,Liberty Media Corp,FWONA,1560385,0001560385-25-000006,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000006/lmca-20250227x8k.htm
-5/25/23,Workday Inc,WDAY,1327811,0001327811-23-000079,"5.02,7.01,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000079/wday-20230519.htm
-5/25/23,Workday Inc,WDAY,1327811,0001327811-23-000077,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000077/wday-20230525.htm
-6/26/23,Workday Inc,WDAY,1327811,0001327811-23-000118,5.07,,,,,N,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000118/wday-20230622.htm
-8/24/23,Workday Inc,WDAY,1327811,0001327811-23-000149,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000149/wday-20230824.htm
-9/7/23,Workday Inc,WDAY,1327811,0001327811-23-000158,5.02,,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000158/wday-20230907.htm
-11/28/23,Workday Inc,WDAY,1327811,0001327811-23-000200,"2.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000200/wday-20231128.htm
-12/1/23,Workday Inc,WDAY,1327811,0001327811-23-000204,"5.02,9.01",,,,,Y,,https://www.sec.gov/Archives/edgar/data/1327811/000132781123000204/wday-20231130.htm
-1/31/24,Workday Inc,WDAY,1327811,0001327811-24-000024,"5.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000024/wday-20240126.htm
-2/26/24,Workday Inc,WDAY,1327811,0001327811-24-000032,"8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000032/wday-20240223.htm
-2/26/24,Workday Inc,WDAY,1327811,0001327811-24-000031,"2.02,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000031/wday-20240226.htm
-4/25/24,Workday Inc,WDAY,1327811,0001327811-24-000079,5.02,,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000079/wday-20240422.htm
-5/23/24,Workday Inc,WDAY,1327811,0001327811-24-000089,"2.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000089/wday-20240523.htm
-6/20/24,Workday Inc,WDAY,1327811,0001327811-24-000106,"5.02,5.07,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000106/wday-20240618.htm
-7/5/24,Workday Inc,WDAY,1327811,0001327811-24-000136,5.02,,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000136/wday-20240702.htm
-8/1/24,Workday Inc,WDAY,1327811,0001327811-24-000155,"5.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000155/wday-20240730.htm
-8/22/24,Workday Inc,WDAY,1327811,0001327811-24-000163,"2.02,8.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000163/wday-20240822.htm
-9/10/24,Workday Inc,WDAY,1327811,0001327811-24-000185,"5.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000185/wday-20240910.htm
-10/1/24,Workday Inc,WDAY,1327811,0001327811-24-000198,"5.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000198/wday-20240925.htm
-11/26/24,Workday Inc,WDAY,1327811,0001327811-24-000234,"5.02,7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000234/wday-20241125.htm
-11/26/24,Workday Inc,WDAY,1327811,0001327811-24-000233,"2.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000233/wday-20241126.htm
-12/3/24,Workday Inc,WDAY,1327811,0001327811-24-000238,"5.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000238/wday-20241203.htm
-2/5/25,Workday Inc,WDAY,1327811,0001327811-25-000030,"2.02,2.05,2.06,7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000030/wday-20250205.htm
-2/25/25,Workday Inc,WDAY,1327811,0001327811-25-000041,"5.02,7.01,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000041/wday-20250220.htm
-2/25/25,Workday Inc,WDAY,1327811,0001327811-25-000040,"2.02,9.01",,,,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000040/wday-20250225.htm
+filing_date,company_name,ticker,cik,accession_number,item_codes,event_type,description,target_or_counterparty,target_location,source_url
+2024-10-10,Liberty Media Corp,FWONA,1560385,0001560385-24-000023,"7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000023/lmca-20241010x8k.htm
+2024-10-22,Liberty Media Corp,FWONA,1560385,0001560385-24-000025,"7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000025/lmca-20241021x8k.htm
+2024-11-12,Liberty Media Corp,FWONA,1560385,0001560385-24-000028,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000028/lmca-20241107x8k.htm
+2024-11-13,Liberty Media Corp,FWONA,1560385,0001104659-24-117311,"5.02,7.01,8.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924117311/tm2428305d1_8k.htm
+2024-12-09,Liberty Media Corp,FWONA,1560385,0001560385-24-000031,"5.02,7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038524000031/lmca-20241206x8k.htm
+2024-12-19,Liberty Media Corp,FWONA,1560385,0001104659-24-130068,"1.01,7.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465924130068/tm2431536d1_8k.htm
+2025-01-08,Liberty Media Corp,FWONA,1560385,0001104659-25-002027,"5.02,7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000110465925002027/tm252278d1_8k.htm
+2025-01-31,Liberty Media Corp,FWONA,1560385,0001560385-25-000002,"7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000002/lmca-20250130x8k.htm
+2025-02-24,Liberty Media Corp,FWONA,1560385,0001560385-25-000004,"7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000004/lmca-20250221x8k.htm
+2025-02-28,Liberty Media Corp,FWONA,1560385,0001560385-25-000006,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1560385/000156038525000006/lmca-20250227x8k.htm
+2024-10-25,Newell Brands Inc,NWL,814453,0000814453-24-000111,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/814453/000081445324000111/nwl-20241025.htm
+2024-10-30,Newell Brands Inc,NWL,814453,0001193125-24-247647,"8.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/814453/000119312524247647/d903434d8k.htm
+2024-11-13,Newell Brands Inc,NWL,814453,0001193125-24-256691,"1.01,2.03,9.01",,,,,https://www.sec.gov/Archives/edgar/data/814453/000119312524256691/d853098d8k.htm
+2025-02-07,Newell Brands Inc,NWL,814453,0000814453-25-000003,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/814453/000081445325000003/nwl-20250207.htm
+2025-02-19,Newell Brands Inc,NWL,814453,0000950170-25-023244,"5.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/814453/000095017025023244/nwl-20250217.htm
+2024-10-01,Workday Inc,WDAY,1327811,0001327811-24-000198,"5.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000198/wday-20240925.htm
+2024-11-26,Workday Inc,WDAY,1327811,0001327811-24-000234,"5.02,7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000234/wday-20241125.htm
+2024-11-26,Workday Inc,WDAY,1327811,0001327811-24-000233,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000233/wday-20241126.htm
+2024-12-03,Workday Inc,WDAY,1327811,0001327811-24-000238,"5.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781124000238/wday-20241203.htm
+2025-02-05,Workday Inc,WDAY,1327811,0001327811-25-000030,"2.02,2.05,2.06,7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000030/wday-20250205.htm
+2025-02-25,Workday Inc,WDAY,1327811,0001327811-25-000041,"5.02,7.01,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000041/wday-20250220.htm
+2025-02-25,Workday Inc,WDAY,1327811,0001327811-25-000040,"2.02,9.01",,,,,https://www.sec.gov/Archives/edgar/data/1327811/000132781125000040/wday-20250225.htm

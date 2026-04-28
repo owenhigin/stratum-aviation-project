@@ -19,7 +19,7 @@ from datetime import datetime
 USER_AGENT = "Stratum Class Project Owen Higinbotham owh227@lehigh.edu"
 
 # Study window
-WINDOW_START = "2023-04-01"
+WINDOW_START = "2024-10-01"
 WINDOW_END = "2025-04-01"
 
 # 3 focal companies
