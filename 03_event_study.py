@@ -152,7 +152,10 @@ def build_flight_features(flights: pd.DataFrame, company: str,
             "flights_to_target_region", "flight_count_above_baseline"
         ]}
 
-    fdf = flights[flights["company_name"] == company].copy()
+    def _norm(s):
+        return str(s).upper().strip().rstrip(".").rstrip()
+    target_norm = _norm(company)
+    fdf = flights[flights["company_name"].apply(_norm) == target_norm].copy()
     fdf["flight_date"] = pd.to_datetime(fdf["flight_date"])
 
     # Window slices
