@@ -26,7 +26,7 @@ WINDOW_END = "2025-04-01"
 COMPANIES = [
     {"name": "Liberty Media Corp", "cik": "1560385", "ticker": "FWONA"},
     {"name": "Workday Inc", "cik": "1327811", "ticker": "WDAY"},
-    {"name": "CenterPoint Energy Inc", "cik": "1130310", "ticker": "CNP"},
+    {"name": "Newell Brands Inc", "cik": "814453", "ticker": "NWL"},
 ]
 
 

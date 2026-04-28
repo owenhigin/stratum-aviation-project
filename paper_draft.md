@@ -12,7 +12,7 @@ Advised by Professor Donald Bowen
 
 ## Abstract
 
-We test whether pre-announcement flight activity of corporate aircraft predicts the magnitude of stock price reactions to material corporate events. Using a sample of ten verified U.S. corporate aircraft and a six-month window (October 2024 – April 2025), we construct flight-activity features in the [-30, 0] day window before each 8-K filing for three focal firms (Liberty Media, Workday, and CenterPoint Energy) and regress event-window cumulative abnormal returns on these flight features. Building on the methodology of Yermack (2014) and combining it with a standard event-study framework, we treat flight data as an alternative data signal that may carry information about event significance prior to public disclosure. Our methodological contribution is documenting how recent expansions in aviation ownership privacy under 49 U.S.C. § 44114 and the 2024 FAA Reauthorization Act constrain the original Yermack approach, motivating a focus on mid-cap firms whose aircraft remain verifiable through public records. [FILL IN: high-level summary of empirical results once data is collected.]
+We test whether pre-announcement flight activity of corporate aircraft predicts the magnitude of stock price reactions to material corporate events. Using a sample of ten verified U.S. corporate aircraft and a six-month window (October 2024 – April 2025), we construct flight-activity features in the [-30, 0] day window before each 8-K filing for three focal firms (Liberty Media, Workday, and Newell Brands) and regress event-window cumulative abnormal returns on these flight features. Building on the methodology of Yermack (2014) and combining it with a standard event-study framework, we treat flight data as an alternative data signal that may carry information about event significance prior to public disclosure. Our methodological contribution is documenting how recent expansions in aviation ownership privacy under 49 U.S.C. § 44114 and the 2024 FAA Reauthorization Act constrain the original Yermack approach, motivating a focus on mid-cap firms whose aircraft remain verifiable through public records. [FILL IN: high-level summary of empirical results once data is collected.]
 
 ---
 
@@ -61,7 +61,7 @@ For each candidate aircraft we required a verifiable evidentiary chain consistin
 | CenterPoint Energy | N102CE | A00C59 | Bombardier Challenger 350 | CenterPoint Energy Service Co LLC |
 | Workday | N191MM | A16D01 | Dassault Falcon 7X | Workday Inc |
 
-For deeper analysis we focus on three companies — Liberty Media, Workday, and CenterPoint Energy — selected because each had non-trivial corporate event activity during the study window and each spans a different sector (media/entertainment, enterprise software, and utilities respectively).
+For deeper analysis we focus on three companies — Liberty Media, Workday, and Newell Brands — selected because each had non-trivial corporate event activity during the study window and each spans a different sector (media/entertainment, enterprise software, and consumer goods respectively).
 
 ### 3.2 Study Window
 

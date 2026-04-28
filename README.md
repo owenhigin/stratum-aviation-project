@@ -16,7 +16,7 @@ This is a replication and adaptation of Yermack (2014) and Bushee, Gerakos & Lee
 
 10 verified U.S. corporate aircraft, mid-cap firms, all confirmed through FAA Aircraft Registry + SEC DEF 14A + OpenSky operator metadata cross-check. See `Final_Company_Aircraft.xlsx` for the full table.
 
-3 focal firms for cross-sectional analysis: **Liberty Media (FWONA)**, **Workday (WDAY)**, **CenterPoint Energy (CNP)** — chosen for sector diversity and non-trivial 8-K activity in the window.
+3 focal firms for cross-sectional analysis: **Liberty Media (FWONA)**, **Workday (WDAY)**, **Newell Brands (NWL)** — chosen for sector diversity and non-trivial 8-K activity in the window.
 
 **Study window**: October 1, 2024 – April 1, 2025 (6 months).
 

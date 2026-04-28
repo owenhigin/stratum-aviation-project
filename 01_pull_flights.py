@@ -30,8 +30,8 @@ from pathlib import Path
 
 # ---- CONFIG ----
 #FILL IN YOUR INFORMATION NOT MINE
-CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "owenhigin@gmail.com-api-client")
-CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "Nx4YMWTtyhV6yxSOTmbg6FcqiuEgbxTN")
+CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "YOURINFO")
+CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "YOURINFO")
 
 # CUT WINDOW: 6 months for the test run.
 # Once we know this works, we can expand to 12 months (with pooled accounts).
@@ -189,7 +189,7 @@ def main():
     df = pd.read_excel(AIRCRAFT_FILE)
     df["icao24"] = df["icao24"].astype(str).str.strip().str.upper()
     # Focal companies only
-    FOCAL_COMPANIES = ["Liberty Media Corp", "Workday, Inc.", "CENTERPOINT ENERGY INC"]
+    FOCAL_COMPANIES = ["Liberty Media Corp", "Workday, Inc.", "NEWELL BRANDS INC."]
     df = df[df["company_name"].isin(FOCAL_COMPANIES)].reset_index(drop=True)
 
     print(f"Filtered to {len(df)} focal aircraft:")

@@ -32,7 +32,7 @@ from datetime import datetime, timedelta
 TICKER_MAP = {
     "Liberty Media Corp": "FWONA",         # also FWONK; FWONA is voting A shares
     "Workday Inc": "WDAY",
-    "CenterPoint Energy Inc": "CNP",
+    "Newell Brands Inc": "NWL",
 }
 
 # Pull a wide window so we have estimation-window data for every event
