@@ -35,45 +35,98 @@ signal     = load("signal_summary.csv")
 hub        = load("hub_analysis.csv")
 dark       = load("dark_period.csv")
 
-st.title("Executive Travel & Market Reaction")
-st.caption("Linking pre-event corporate jet activity to cumulative abnormal returns (CAR[-1,+1])")
+st.title("Does Executive Travel Predict Stock Market Reactions?")
+st.markdown(
+    """
+    This dashboard explores whether corporate jet activity in the weeks before a major company
+    announcement is associated with how the stock market reacts to that announcement.
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    We tracked private jet flights for **6 S&P 500 companies** across **39 material corporate events**
+    (earnings releases, executive changes, M&A agreements, and other filings) from 2023–2025.
+    For each event, we measured the **Cumulative Abnormal Return (CAR)** — how much the stock moved
+    *beyond what the market model predicted* in the 3-day window around the filing date.
+    """
+)
+
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "Overview",
-    "Regression",
+    "Regression Analysis",
     "Flight Map",
-    "Timeline",
-    "Patterns",
+    "Event Timeline",
+    "Patterns & Signals",
+    "Methodology",
 ])
 
 
 # ── TAB 1: OVERVIEW ──────────────────────────────────────────────────────────
 with tab1:
+    st.subheader("What is a Cumulative Abnormal Return (CAR)?")
+    st.markdown(
+        """
+        A **CAR[-1,+1]** measures how a stock performed *relative to expectations* over the 3-day
+        window surrounding a corporate event (the day before, the event day, and the day after).
+
+        - We first estimate each stock's normal relationship with the S&P 500 using a **market model**
+          (OLS regression over the 220 trading days ending 30 days before the event).
+        - We then calculate the **abnormal return** each day — the actual return minus what the market
+          model predicted.
+        - **CAR = sum of those 3 abnormal daily returns.**
+
+        A positive CAR means the market reacted *better* than expected; a negative CAR means *worse*
+        than expected. This isolates the stock's reaction to the specific event from general market moves.
+        """
+    )
+
+    st.divider()
+
     if profiles.empty:
         st.info("Run 04_regression.py to generate data.")
     else:
+        st.subheader("Firm-Level Summary")
+        st.caption(
+            "Each card shows a firm's average market reaction across all its events, "
+            "and how much executive travel preceded those events on average."
+        )
         cols = st.columns(len(profiles))
         for i, (_, row) in enumerate(profiles.iterrows()):
             with cols[i]:
-                st.markdown(f"### {row['company_name']}")
+                st.markdown(f"**{row['company_name']}**")
                 car = row["mean_car"]
-                st.metric("Mean CAR", f"{car:+.2%}" if pd.notna(car) else "N/A")
-                st.metric("Avg Flights (30d)", f"{row['avg_flights_30d']:.1f}"
-                          if pd.notna(row["avg_flights_30d"]) else "N/A")
-                st.metric("Events", int(row["n_events"]))
+                st.metric(
+                    "Avg Abnormal Return (CAR)",
+                    f"{car:+.2%}" if pd.notna(car) else "N/A",
+                    help="Average 3-day cumulative abnormal return across all events for this firm. "
+                         "Positive = stock beat market expectations; Negative = fell short."
+                )
+                st.metric(
+                    "Avg Pre-Event Flights (30 days)",
+                    f"{row['avg_flights_30d']:.1f}" if pd.notna(row["avg_flights_30d"]) else "N/A",
+                    help="Average number of corporate jet flights recorded in the 30 days before each event."
+                )
+                st.metric("Events Analyzed", int(row["n_events"]))
                 pct = row.get("pct_above_baseline")
-                st.metric("% Above Baseline", f"{pct:.0f}%" if pd.notna(pct) else "N/A")
+                st.metric(
+                    "Events with Above-Normal Travel",
+                    f"{pct:.0f}%" if pd.notna(pct) else "N/A",
+                    help="Share of events where the firm flew more than its own historical average "
+                         "in the 30 days prior."
+                )
 
         st.divider()
         col1, col2 = st.columns(2)
 
         with col1:
+            st.markdown("**Average Market Reaction by Firm**")
+            st.caption(
+                "Green bars = stock beat market expectations on average. "
+                "Red bars = stock underperformed expectations. "
+                "This does not yet account for how many flights preceded the events."
+            )
             fig = px.bar(
                 profiles, x="company_name", y="mean_car",
                 color="mean_car",
                 color_continuous_scale=["red", "white", "green"],
-                title="Mean CAR by Firm",
-                labels={"mean_car": "Mean CAR[-1,+1]", "company_name": ""},
+                labels={"mean_car": "Avg CAR[-1,+1]", "company_name": ""},
                 text=profiles["mean_car"].apply(
                     lambda v: f"{v:+.2%}" if pd.notna(v) else ""),
             )
@@ -82,12 +135,17 @@ with tab1:
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
+            st.markdown("**Do Firms That Travel More Have Different Market Reactions?**")
+            st.caption(
+                "Each dot is a firm. The x-axis shows how many pre-event flights the firm averaged; "
+                "the y-axis shows its average abnormal return. "
+                "A clear upward or downward trend would suggest a relationship — the regression tab tests this formally."
+            )
             fig = px.scatter(
                 profiles, x="avg_flights_30d", y="mean_car",
                 text="company_name",
-                title="Avg Pre-Event Flights vs Mean CAR",
-                labels={"avg_flights_30d": "Avg Flights (30d pre-event)",
-                        "mean_car": "Mean CAR[-1,+1]",
+                labels={"avg_flights_30d": "Avg Corporate Jet Flights in 30 Days Before Event",
+                        "mean_car": "Avg Cumulative Abnormal Return (CAR[-1,+1])",
                         "company_name": ""},
             )
             fig.update_traces(textposition="top center", marker_size=12)
@@ -97,10 +155,30 @@ with tab1:
 
 # ── TAB 2: REGRESSION ────────────────────────────────────────────────────────
 with tab2:
+    st.subheader("OLS Regression: Do Pre-Event Flights Predict Abnormal Returns?")
+    st.markdown(
+        """
+        We run **Ordinary Least Squares (OLS) regressions** with CAR[-1,+1] as the dependent variable
+        and corporate jet flight counts as the key independent variables.
+        Standard errors are **HC3 heteroskedasticity-robust** to account for variation in event sizes.
+
+        **Three model specifications:**
+        - **Model 1 — Baseline:** Only the number of flights in the 30 days before the event.
+          *Does raw travel volume predict market reaction?*
+        - **Model 2 — Add Short Window:** Adds the 7-day pre-event flight count.
+          *Does travel intensity in the final week before the announcement carry additional signal?*
+        - **Model 3 — Full Controls:** Adds dummy variables for event type (Earnings, Executive Change,
+          Material Agreement, Other) and for each firm.
+          *Controlling for the fact that different event types and different companies naturally produce
+          different market reactions — what is the pure flight effect?*
+        """
+    )
+
+    st.divider()
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.subheader("OLS Results (HC3 Robust SE)")
+        st.markdown("**Regression Coefficients**")
         if regression.empty:
             st.info("Run 04_regression.py to generate regression results.")
         else:
@@ -108,47 +186,79 @@ with tab2:
                 index="variable", columns="model",
                 values=["coef", "tstat", "pval"], aggfunc="first",
             )
-            pivot.columns = [f"{m} — {s}" for s, m in pivot.columns]
+            pivot.columns = [f"{m} | {s.replace('coef','Coefficient').replace('tstat','t-stat').replace('pval','p-value')}"
+                             for s, m in pivot.columns]
+            pivot.index = (pivot.index
+                           .str.replace("flight_count_30d", "Flights (30-day window)")
+                           .str.replace("flight_count_7d", "Flights (7-day window)")
+                           .str.replace("et_", "Event Type: ")
+                           .str.replace("firm_", "Firm: ")
+                           .str.replace("_", " "))
             st.dataframe(pivot.style.format("{:.4f}"), use_container_width=True)
-            st.caption("* p<0.10  ** p<0.05  *** p<0.01")
+            st.caption(
+                "Coefficient = change in CAR for each additional flight. "
+                "t-stat and p-value indicate statistical significance.  \n"
+                "Significance thresholds: \\* p<0.10 &nbsp; \\*\\* p<0.05 &nbsp; \\*\\*\\* p<0.01"
+            )
 
-            # Show R² and N per model
+            st.markdown("**Model Fit**")
             summary = regression.groupby("model").agg(
                 R2=("r_squared", "first"), N=("n", "first")
             ).reset_index()
+            summary.columns = ["Model", "R² (Explanatory Power)", "N (Events)"]
             st.dataframe(summary, use_container_width=True, hide_index=True)
+            st.caption(
+                "R² measures how much of the variation in abnormal returns is explained by the model. "
+                "An R² near 0 means flight counts alone explain very little of the variation in CAR."
+            )
 
     with col2:
-        st.subheader("Mean CAR by Pre-Event Flight Count")
+        st.markdown("**Average Abnormal Return by Pre-Event Flight Count**")
+        st.caption(
+            "This chart groups events by how many corporate jet flights occurred in the 30 days before them, "
+            "then shows the average CAR for each group. "
+            "If travel is a meaningful signal, you would expect a clear pattern across bins. "
+            "The number on each bar (n=) shows how many events fall in that group."
+        )
         if binned.empty:
             st.info("Run 04_regression.py.")
         else:
             et_options = binned["event_type"].unique().tolist()
-            et_sel = st.selectbox("Event type", et_options,
-                                  index=et_options.index("All") if "All" in et_options else 0)
+            et_sel = st.selectbox(
+                "Filter by event type",
+                et_options,
+                index=et_options.index("All") if "All" in et_options else 0,
+                help="Select 'All' to see the full sample, or pick a specific event type."
+            )
             sub = binned[binned["event_type"] == et_sel]
             fig = px.bar(
                 sub, x="flight_bin", y="mean_car",
                 color="mean_car",
                 color_continuous_scale=["red", "white", "green"],
                 text=sub["n_events"].apply(lambda n: f"n={n}"),
-                labels={"flight_bin": "Flights in Prior 30 Days",
-                        "mean_car": "Mean CAR[-1,+1]"},
+                labels={"flight_bin": "Number of Flights in the 30 Days Before the Event",
+                        "mean_car": "Average CAR[-1,+1] (Abnormal Return)"},
             )
             fig.add_hline(y=0, line_dash="dash", line_color="gray")
             fig.update_layout(coloraxis_showscale=False)
             st.plotly_chart(fig, use_container_width=True)
 
-            st.subheader("Same View — 7-Day Window")
-            if "flight_count_7d" in regression.get("variable", pd.Series()).values \
-                    or not binned.empty:
-                st.caption("(7-day binning uses the same dataset filtered to flight_count_7d)")
-
 
 # ── TAB 3: FLIGHT MAP ────────────────────────────────────────────────────────
 with tab3:
-    st.subheader("Pre-Event Flight Destinations")
-    st.caption("Flights in the 30 days before each event — green = positive CAR, red = negative")
+    st.subheader("Where Were Executives Flying Before Each Event?")
+    st.markdown(
+        """
+        This map shows every corporate jet flight taken in the **30 days before** each event.
+        Flight lines and destination markers are colored by the stock market outcome:
+
+        - **Green** = the event was followed by a positive abnormal return (stock beat expectations)
+        - **Red** = the event was followed by a negative abnormal return (stock fell short of expectations)
+
+        Use the filters to narrow down by company, event type, or how far in advance the flights occurred.
+        Hover over a destination marker for details.
+        """
+    )
 
     if map_data.empty:
         st.info("No flight map data. Run 04_regression.py.")
@@ -159,7 +269,7 @@ with tab3:
         et_sel  = c2.multiselect("Event type",
                                   map_data["event_type"].dropna().unique(),
                                   default=list(map_data["event_type"].dropna().unique()))
-        day_sel = c3.slider("Max days before event", 1, 30, 30)
+        day_sel = c3.slider("Show flights up to X days before event", 1, 30, 30)
 
         filtered = map_data[
             map_data["company_name"].isin(co_sel) &
@@ -191,8 +301,13 @@ with tab3:
                 opacity=0.85,
             ),
             text=filtered.apply(
-                lambda r: f"{r['arr_city']}<br>{r['company_name']}<br>"
-                          f"CAR: {r['car_3day']:+.2%}<br>{r['days_before']}d before event",
+                lambda r: (
+                    f"<b>{r['arr_city']}</b><br>"
+                    f"Company: {r['company_name']}<br>"
+                    f"Event type: {r['event_type']}<br>"
+                    f"Abnormal Return (CAR): {r['car_3day']:+.2%}<br>"
+                    f"Flight was {r['days_before']} day(s) before event"
+                ),
                 axis=1,
             ),
             hoverinfo="text",
@@ -206,31 +321,49 @@ with tab3:
             margin=dict(l=0, r=0, t=0, b=0),
         )
         st.plotly_chart(fig, use_container_width=True)
-        st.caption(f"Showing {len(filtered)} flights across {filtered['event_date'].nunique()} events")
+        st.caption(
+            f"Showing {len(filtered)} flights across {filtered['event_date'].nunique()} events. "
+            "Each line connects departure to arrival. Marker color reflects the CAR for that event."
+        )
 
 
 # ── TAB 4: TIMELINE ──────────────────────────────────────────────────────────
 with tab4:
-    st.subheader("Flight Activity Around Events")
-    st.caption("Bars = daily flights, line = cumulative stock return")
+    st.subheader("Flight Activity and Stock Returns Around a Specific Event")
+    st.markdown(
+        """
+        Select any event below to see a day-by-day view of how much the company's jet was flying
+        in the 30 days leading up to it, alongside the stock's cumulative return over that period.
+
+        - **Blue bars** = number of corporate jet flights on each day
+        - **Orange line** = cumulative stock return leading into the event
+        - The **dashed vertical line** marks the event filing date (day 0)
+        - The **CAR metric** above the chart shows the 3-day abnormal return around the event
+        """
+    )
 
     if timeline.empty:
         st.info("No timeline data. Run 04_regression.py.")
     else:
         event_keys = sorted(timeline["event_key"].unique())
-        selected   = st.selectbox("Select event", event_keys)
+        selected   = st.selectbox("Select an event to examine", event_keys,
+                                  help="Format: Company | Filing Date | Event Type")
         ev_data    = timeline[timeline["event_key"] == selected] \
                              .sort_values("days_before", ascending=False)
 
         car_val = ev_data["car_3day"].iloc[0]
-        st.metric("CAR[-1,+1]", f"{car_val:+.2%}" if pd.notna(car_val) else "N/A",
-                  delta="Positive" if pd.notna(car_val) and car_val > 0 else "Negative")
+        st.metric(
+            "3-Day Cumulative Abnormal Return (CAR[-1,+1])",
+            f"{car_val:+.2%}" if pd.notna(car_val) else "N/A",
+            delta="Above expectations" if pd.notna(car_val) and car_val > 0 else "Below expectations",
+            help="How much the stock moved beyond what the market model predicted over the 3-day event window."
+        )
 
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=-ev_data["days_before"],
             y=ev_data["flight_count"],
-            name="Flights",
+            name="Corporate Jet Flights",
             marker_color="steelblue",
             opacity=0.75,
         ))
@@ -240,17 +373,17 @@ with tab4:
             fig.add_trace(go.Scatter(
                 x=-ev_data["days_before"],
                 y=cum_ret,
-                name="Cumulative Return",
+                name="Cumulative Stock Return",
                 yaxis="y2",
                 line=dict(color="darkorange", width=2.5),
             ))
 
         fig.add_vline(x=0, line_dash="dash", line_color="gray",
-                      annotation_text="Event Date", annotation_position="top")
+                      annotation_text="Event Filing Date", annotation_position="top")
         fig.update_layout(
-            xaxis_title="Days Relative to Event",
-            yaxis_title="Flight Count",
-            yaxis2=dict(title="Cumulative Return", overlaying="y",
+            xaxis_title="Days Relative to Event (negative = days before, 0 = event date)",
+            yaxis_title="Number of Flights",
+            yaxis2=dict(title="Cumulative Stock Return", overlaying="y",
                         side="right", tickformat=".1%"),
             legend=dict(x=0.01, y=0.99),
             height=420,
@@ -260,44 +393,89 @@ with tab4:
 
 # ── TAB 5: PATTERNS ──────────────────────────────────────────────────────────
 with tab5:
+    st.subheader("Do Specific Travel Patterns Predict Better or Worse Outcomes?")
+    st.markdown(
+        "Beyond raw flight counts, we examine whether specific patterns — flying above historical norms, "
+        "flying to financial hubs, or not flying at all — are associated with market reactions."
+    )
+
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Signal Strength")
-        st.caption("How often does above-baseline travel predict positive CAR?")
+        st.markdown("**Does Above-Normal Travel Predict a Positive Market Reaction?**")
+        st.markdown(
+            """
+            For each event, we compare the firm's pre-event flight count to its own historical average
+            (its baseline). If a firm flies *more than usual* before an event, does the market reaction
+            tend to be positive?
+
+            - **Events with above-baseline travel**: flights in the prior 30 days exceeded the firm's average
+            - **Events with below-baseline travel**: flights were at or below the firm's average
+            - **Hit Rate Lift**: how many percentage points more often the market reacted positively
+              when travel was elevated vs. not
+            """
+        )
         if not signal.empty:
+            signal_display = signal.copy()
+            signal_display.columns = [
+                "Event Type",
+                "N (Above Baseline)",
+                "% Positive CAR When Travel Elevated",
+                "N (Below Baseline)",
+                "% Positive CAR When Travel Normal/Low",
+                "Hit Rate Lift (pp)",
+            ]
             fmt = {
-                "pct_positive_when_above": "{:.1f}%",
-                "pct_positive_when_below": "{:.1f}%",
-                "hit_rate_lift_pp":        "{:+.1f}pp",
+                "% Positive CAR When Travel Elevated": "{:.1f}%",
+                "% Positive CAR When Travel Normal/Low": "{:.1f}%",
+                "Hit Rate Lift (pp)": "{:+.1f}pp",
             }
-            st.dataframe(signal.style.format(fmt), use_container_width=True,
-                         hide_index=True)
+            st.dataframe(signal_display.style.format(fmt), use_container_width=True, hide_index=True)
+            st.caption(
+                "Hit Rate Lift = (% positive when above baseline) minus (% positive when below baseline). "
+                "A positive lift means elevated travel is associated with better outcomes."
+            )
         else:
             st.info("Run 04_regression.py.")
 
         st.divider()
-        st.subheader("Dark Period Analysis")
-        st.caption("Events with zero pre-event flights vs. active travel periods")
+
+        st.markdown("**Do Events with Zero Pre-Event Flights React Differently?**")
+        st.markdown(
+            """
+            Some events had no corporate jet activity in the prior 30 days at all — a 'dark period.'
+            This could mean executives were deliberately keeping a low profile, or simply that no
+            material travel was needed. We compare CAR outcomes for these 'dark' events against
+            events where some travel did occur.
+            """
+        )
         if not dark.empty:
             fig = px.bar(
                 dark, x="period_type", y="mean_car",
                 color="mean_car",
                 color_continuous_scale=["red", "white", "green"],
                 text=dark.apply(
-                    lambda r: f"n={int(r['n_events'])}  |  "
-                              f"{r['pct_negative_car']:.0f}% negative",
+                    lambda r: f"n={int(r['n_events'])}  |  {r['pct_negative_car']:.0f}% negative",
                     axis=1,
                 ),
-                labels={"mean_car": "Mean CAR[-1,+1]", "period_type": ""},
+                labels={"mean_car": "Average Abnormal Return (CAR[-1,+1])",
+                        "period_type": ""},
+                title="Average CAR: Events with No Pre-Event Flights vs. Active Travel"
             )
             fig.add_hline(y=0, line_dash="dash", line_color="gray")
             fig.update_layout(coloraxis_showscale=False)
             st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        st.subheader("Financial Hub Travel")
-        st.caption("Did executives fly to major financial centers before events?")
+        st.markdown("**Does Flying to Financial Hubs Signal Anything?**")
+        st.markdown(
+            """
+            Flights to major financial centers (New York, Chicago, Boston, London, etc.) before
+            an event could indicate meetings with investors, banks, or deal counterparties.
+            This chart shows whether events preceded by hub-city travel tended to produce
+            higher or lower abnormal returns.
+            """
+        )
         if not hub.empty:
             hub_sum = hub.groupby(["company_name", "event_type"]).agg(
                 pct_flew_to_hub=("flew_to_hub", "mean"),
@@ -309,15 +487,20 @@ with tab5:
                 x="pct_flew_to_hub", y="mean_car",
                 color="company_name", symbol="event_type",
                 size="n", size_max=24,
-                labels={"pct_flew_to_hub": "Share of Events with Hub Flight",
-                        "mean_car": "Mean CAR[-1,+1]",
-                        "company_name": "Firm"},
+                labels={"pct_flew_to_hub": "Share of Events Where Executives Flew to a Financial Hub",
+                        "mean_car": "Average Abnormal Return (CAR[-1,+1])",
+                        "company_name": "Company",
+                        "event_type": "Event Type"},
             )
             fig.add_hline(y=0, line_dash="dash", line_color="gray")
             st.plotly_chart(fig, use_container_width=True)
 
             st.divider()
-            st.subheader("Destination Type Breakdown")
+            st.markdown("**Where Were Executives Flying? Hub vs. Non-Hub Destinations**")
+            st.caption(
+                "Financial hubs include: New York, Chicago, Boston, Los Angeles, San Francisco, "
+                "Washington, Houston, Dallas, Atlanta, Charlotte, Philadelphia, Seattle, and Miami."
+            )
             if not map_data.empty:
                 map_data["is_hub"] = map_data["arr_city"].str.lower().isin({
                     "new york", "manhattan", "chicago", "london", "san francisco",
@@ -327,15 +510,156 @@ with tab5:
                 breakdown = map_data.groupby(["company_name", "is_hub"]).size() \
                                     .reset_index(name="n_flights")
                 breakdown["destination_type"] = breakdown["is_hub"].map(
-                    {True: "Financial Hub", False: "Other"})
+                    {True: "Financial Hub", False: "Other Destination"})
                 fig = px.bar(breakdown, x="company_name", y="n_flights",
                              color="destination_type",
                              barmode="stack",
-                             labels={"n_flights": "Pre-Event Flights",
+                             labels={"n_flights": "Number of Pre-Event Flights",
                                      "company_name": "",
-                                     "destination_type": ""},
+                                     "destination_type": "Destination Type"},
                              color_discrete_map={"Financial Hub": "steelblue",
-                                                 "Other": "lightgray"})
+                                                 "Other Destination": "lightgray"})
                 st.plotly_chart(fig, use_container_width=True)
         else:
             st.info("Run 04_regression.py.")
+
+
+# ── TAB 6: METHODOLOGY ───────────────────────────────────────────────────────
+with tab6:
+    st.subheader("How We Built This: Data Pipeline & Methodology")
+    st.markdown(
+        "This project combined three independent data sources — SEC filings, private flight records, "
+        "and stock price data — into a single event study framework. Below is a step-by-step walkthrough "
+        "of exactly what we did and why."
+    )
+
+    st.divider()
+
+    st.markdown("### Step 1 — Identify the Companies & Events")
+    st.markdown(
+        """
+        We selected **6 S&P 500 companies** spanning different industries as our focal firms:
+        CenterPoint Energy, Great Southern Bancorp, Macy's, Murphy USA, Newell Brands, and Workday.
+
+        For each company, we pulled all **SEC Form 8-K filings** from October 2024 through early 2025
+        using the SEC EDGAR full-text search API. Form 8-K is filed whenever a material corporate event
+        occurs — earnings releases, executive changes, mergers, and more.
+
+        We then **manually classified** each filing into one of four event types:
+        - **Earnings** — quarterly or annual financial results
+        - **Executive Change** — CEO/CFO departures, appointments, or transitions
+        - **Material Agreement** — significant contracts, partnerships, or M&A activity
+        - **Other** — regulatory updates, restructurings, or other disclosures
+
+        Filings flagged as routine (e.g., scheduled investor calls, boilerplate updates) were excluded.
+        This left us with **39 events** across the 6 firms.
+        """
+    )
+
+    st.divider()
+
+    st.markdown("### Step 2 — Collect Corporate Jet Flight Data")
+    st.markdown(
+        """
+        We tracked the private aircraft registered to each company using the **OpenSky Network API**,
+        a crowd-sourced ADS-B flight tracking database. Aircraft tail numbers were sourced from FAA
+        registration records matched to each company.
+
+        For each tail number, we pulled flight records covering **October 2023 through April 2025**,
+        capturing every departure and arrival with timestamps. The raw data was then enriched with
+        airport names, cities, and GPS coordinates from the **OurAirports open database**, giving us
+        full origin-to-destination records for every flight.
+
+        In total, we collected **707 flights** across the 6 firms over this period.
+
+        **Note on excluded firms:** Two originally selected companies could not be included in the
+        final analysis — Nordstrom (JWN) went private in March 2025 and Yahoo Finance purged its
+        historical price data, and Skechers (SKX) had an unresolvable data retrieval error.
+        """
+    )
+
+    st.divider()
+
+    st.markdown("### Step 3 — Pull Stock Prices & Run the Event Study")
+    st.markdown(
+        """
+        Daily adjusted closing prices for all 6 firms and the **S&P 500 index (^GSPC)** were
+        downloaded from Yahoo Finance via the `yfinance` library, covering September 2023 through
+        April 2025.
+
+        For each of the 39 events, we ran a **market model event study**:
+
+        1. **Estimation window:** We used the 220 trading days ending 30 days before the event
+           (approximately days -250 to -30) to estimate each stock's relationship with the market.
+           Using OLS regression, we estimated the stock's **alpha** (baseline return) and **beta**
+           (sensitivity to market moves).
+
+        2. **Abnormal returns:** In the 3-day event window (day -1, day 0, day +1), we compared
+           what the stock *actually* returned against what the market model *predicted* it would return.
+           The difference is the **abnormal return** for each day.
+
+        3. **CAR[-1,+1]:** We summed the three daily abnormal returns to get the
+           **Cumulative Abnormal Return**, our primary outcome variable.
+           A positive CAR means the stock beat the market-adjusted expectation around the event;
+           a negative CAR means it fell short.
+        """
+    )
+
+    st.divider()
+
+    st.markdown("### Step 4 — Build Flight Features & Run Regressions")
+    st.markdown(
+        """
+        For each event, we constructed two **pre-event flight features** from the corporate jet data:
+        - **Flight count (30-day window):** Total flights in the 30 calendar days before the filing date
+        - **Flight count (7-day window):** Total flights in the final 7 days before the filing date
+
+        We also computed each firm's **historical flight baseline** (average flights per 30-day period
+        over its full tracked history) to flag events where travel was elevated above normal.
+
+        We then ran **three OLS regression specifications** with CAR[-1,+1] as the outcome:
+        - **Model 1:** Flight count (30-day) only — the simplest test of whether travel volume matters
+        - **Model 2:** 30-day + 7-day flight counts — tests whether the short-window signal adds information
+        - **Model 3:** All flight variables + event type dummies + firm fixed effects —
+          controls for the natural variation in market reactions across different event types and companies,
+          isolating the marginal effect of flight activity
+
+        All models use **HC3 heteroskedasticity-robust standard errors**.
+        """
+    )
+
+    st.divider()
+
+    st.markdown("### Sample Summary")
+    col1, col2, col3, col4 = st.columns(4)
+    col1.metric("Companies", "6")
+    col2.metric("Events Analyzed", "39")
+    col3.metric("Total Flights Tracked", "707")
+    col4.metric("Study Period", "2023 – 2025")
+
+    st.markdown(" ")
+    st.markdown(
+        """
+        | Event Type | Count |
+        |---|---|
+        | Earnings | 15 |
+        | Executive Change | 10 |
+        | Other | 10 |
+        | Material Agreement | 4 |
+        | **Total** | **39** |
+        """
+    )
+
+    st.divider()
+    st.markdown("### Data Sources")
+    st.markdown(
+        """
+        | Source | What We Used It For |
+        |---|---|
+        | SEC EDGAR API | Pulled all 8-K filings and manually classified events |
+        | OpenSky Network API | Corporate jet flight records by tail number |
+        | OurAirports.com | Airport names, cities, and GPS coordinates |
+        | Yahoo Finance (yfinance) | Daily adjusted stock prices and S&P 500 index |
+        | FAA Aircraft Registry | Matched company names to tail numbers |
+        """
+    )
