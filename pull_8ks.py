@@ -1,10 +1,19 @@
 """
-Pull all 8-K filings for the 3 focal companies from SEC EDGAR.
+Pull all 8-K filings for all 10 sample companies from SEC EDGAR.
 
 Uses EDGAR's structured submissions API (free, no auth, fast).
 Output: events_starter.csv with one row per 8-K filing in the window.
 
-You then fill in: event_type, description, target_or_counterparty, target_location
+Columns pre-filled by this script:
+    filing_date, company_name, ticker, cik, accession_number,
+    item_codes, source_url
+
+Columns left blank for manual classification:
+    event_type, description, target_or_counterparty, target_location,
+    include, skip_reason
+
+Order in output: focal three first (Liberty Media, Newell Brands, Workday),
+then the other seven, sorted by company then filing_date.
 
 The SEC requires a real User-Agent string. Put your name and email below.
 """
@@ -13,7 +22,6 @@ import requests
 import pandas as pd
 import time
 from pathlib import Path
-from datetime import datetime
 
 # ---- CONFIG ----
 USER_AGENT = "Stratum Class Project Owen Higinbotham owh227@lehigh.edu"
@@ -22,11 +30,39 @@ USER_AGENT = "Stratum Class Project Owen Higinbotham owh227@lehigh.edu"
 WINDOW_START = "2024-10-01"
 WINDOW_END = "2025-04-01"
 
-# 3 focal companies
+# Companies in the order they should appear in the output:
+# focal three first (Liberty Media, Newell Brands, Workday), then the other seven.
+# CIKs verified from SEC EDGAR.
 COMPANIES = [
-    {"name": "Liberty Media Corp", "cik": "1560385", "ticker": "FWONA"},
-    {"name": "Workday Inc", "cik": "1327811", "ticker": "WDAY"},
-    {"name": "Newell Brands Inc", "cik": "814453", "ticker": "NWL"},
+    # Focal three
+    {"name": "Liberty Media Corp",         "cik": "1560385",  "ticker": "FWONA"},
+    {"name": "Newell Brands Inc",          "cik": "814453",   "ticker": "NWL"},
+    {"name": "Workday Inc",                "cik": "1327811",  "ticker": "WDAY"},
+    # Other seven (alphabetical by ticker for sanity)
+    {"name": "CenterPoint Energy Inc",     "cik": "1130310",  "ticker": "CNP"},
+    {"name": "Great Southern Bancorp Inc", "cik": "854560",   "ticker": "GSBC"},
+    {"name": "Life Time Group Holdings",   "cik": "1869198",  "ticker": "LTH"},
+    {"name": "Macy's Inc",                 "cik": "794367",   "ticker": "M"},
+    {"name": "Murphy USA Inc",             "cik": "1573516",  "ticker": "MUSA"},
+    {"name": "Nordstrom Inc",              "cik": "72333",    "ticker": "JWN"},
+    {"name": "Skechers USA Inc",           "cik": "1065837",  "ticker": "SKX"},
+]
+
+# Final column order
+OUTPUT_COLS = [
+    "filing_date",
+    "company_name",
+    "ticker",
+    "cik",
+    "accession_number",
+    "item_codes",
+    "event_type",
+    "description",
+    "target_or_counterparty",
+    "target_location",
+    "include",
+    "skip_reason",
+    "source_url",
 ]
 
 
@@ -39,33 +75,27 @@ def fetch_submissions(cik: str) -> dict:
     return r.json()
 
 
-def fetch_8k_items(cik: str, accession: str) -> str:
-    """
-    Fetch the index page for a specific 8-K filing and extract item codes.
-    The submissions JSON doesn't include item codes directly; they're on
-    the filing's index page.
-    """
-    cik_int = str(int(cik))  # remove leading zeros
-    accession_clean = accession.replace("-", "")
-    url = (f"https://www.sec.gov/cgi-bin/browse-edgar?"
-           f"action=getcompany&CIK={cik_int}"
-           f"&type=8-K&dateb=&owner=include&count=40&action=getcompany")
-    # Actually easier: items are in the "items" field of submissions JSON
-    # for recent filings. We'll get them from there.
-    return ""
+def collect_8ks(company: dict, sort_index: int) -> pd.DataFrame:
+    """Collect all 8-K filings for one company within the window.
 
-
-def collect_8ks(company: dict) -> pd.DataFrame:
-    """Collect all 8-K filings for one company within the window."""
+    sort_index is used to preserve the requested company ordering in the
+    final output (focal three first, then others).
+    """
     print(f"\nFetching submissions for {company['name']} (CIK {company['cik']})...")
-    data = fetch_submissions(company["cik"])
+    try:
+        data = fetch_submissions(company["cik"])
+    except requests.HTTPError as e:
+        print(f"  ERROR: HTTP {e.response.status_code} - skipping")
+        return pd.DataFrame()
+    except Exception as e:
+        print(f"  ERROR: {e} - skipping")
+        return pd.DataFrame()
 
     recent = data.get("filings", {}).get("recent", {})
     if not recent:
         print(f"  no recent filings found")
         return pd.DataFrame()
 
-    # Build a dataframe from the parallel arrays in 'recent'
     df = pd.DataFrame({
         "form": recent.get("form", []),
         "filing_date": recent.get("filingDate", []),
@@ -78,7 +108,7 @@ def collect_8ks(company: dict) -> pd.DataFrame:
     # Filter to 8-K only
     df = df[df["form"] == "8-K"].copy()
 
-    # Filter to our window
+    # Filter to window
     df = df[(df["filing_date"] >= WINDOW_START) &
             (df["filing_date"] < WINDOW_END)].copy()
 
@@ -95,12 +125,13 @@ def collect_8ks(company: dict) -> pd.DataFrame:
         axis=1
     )
 
-    # Add company info
+    # Add metadata
     df["company_name"] = company["name"]
     df["ticker"] = company["ticker"]
     df["cik"] = company["cik"]
+    df["_company_sort"] = sort_index
 
-    # Rename items column for clarity
+    # Rename items
     df = df.rename(columns={"items": "item_codes"})
 
     print(f"  found {len(df)} 8-K filings in window")
@@ -108,51 +139,47 @@ def collect_8ks(company: dict) -> pd.DataFrame:
 
 
 def main():
-    if "owh227@lehigh.edu" not in USER_AGENT:
-        print("WARNING: USER_AGENT may need your real email. SEC requires it.")
+    if "PASTE_" in USER_AGENT or "@" not in USER_AGENT:
+        print("WARNING: USER_AGENT may need a real email. SEC requires it.")
 
     all_filings = []
-    for company in COMPANIES:
-        df = collect_8ks(company)
+    for sort_idx, company in enumerate(COMPANIES):
+        df = collect_8ks(company, sort_idx)
         if len(df) > 0:
             all_filings.append(df)
         time.sleep(0.2)  # SEC fair use
 
     if not all_filings:
-        print("No filings collected.")
+        print("\nNo filings collected for any company.")
         return
 
     combined = pd.concat(all_filings, ignore_index=True)
 
-    # Add the columns YOU need to fill in (blank for now)
-    combined["event_type"] = ""
-    combined["description"] = ""
-    combined["target_or_counterparty"] = ""
-    combined["target_location"] = ""
+    # Add blank columns for manual classification
+    for col in ["event_type", "description", "target_or_counterparty",
+                "target_location", "include", "skip_reason"]:
+        combined[col] = ""
+
+    # Sort: company in requested order, then filing_date ascending within each
+    combined = combined.sort_values(
+        ["_company_sort", "filing_date"]
+    ).reset_index(drop=True)
+    combined = combined.drop(columns=["_company_sort", "form",
+                                       "report_date", "primary_document"])
 
     # Final column order
-    output_cols = [
-        "filing_date",
-        "company_name",
-        "ticker",
-        "cik",
-        "accession_number",
-        "item_codes",
-        "event_type",
-        "description",
-        "target_or_counterparty",
-        "target_location",
-        "source_url",
-    ]
-    combined = combined[output_cols]
-    combined = combined.sort_values(["company_name", "filing_date"]).reset_index(drop=True)
+    combined = combined[OUTPUT_COLS]
 
     out = Path("events_starter.csv")
     combined.to_csv(out, index=False)
-    print(f"\nWrote {out} ({len(combined)} filings)")
+    print(f"\n{'='*60}")
+    print(f"Wrote {out} ({len(combined)} filings)")
+    print(f"{'='*60}\n")
 
-    print(f"\nSummary by company:")
-    print(combined.groupby("company_name").size())
+    print("Filings per company (in output order):")
+    counts = combined.groupby("company_name", sort=False).size()
+    for company, n in counts.items():
+        print(f"  {company:35s}  {n:3d} filings")
 
     print(f"\nMost common item codes:")
     item_counts = {}
@@ -161,10 +188,10 @@ def main():
             item = item.strip()
             if item:
                 item_counts[item] = item_counts.get(item, 0) + 1
-    for item, count in sorted(item_counts.items(), key=lambda x: -x[1]):
+    for item, count in sorted(item_counts.items(), key=lambda x: -x[1])[:15]:
         print(f"  {item}: {count}")
 
-    print(f"\nFirst 5 rows:")
+    print(f"\nFirst 5 rows of output:")
     print(combined.head().to_string())
 
 

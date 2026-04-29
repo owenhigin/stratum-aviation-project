@@ -30,8 +30,8 @@ from pathlib import Path
 
 # ---- CONFIG ----
 #FILL IN YOUR INFORMATION NOT MINE
-CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "YOURINFO")
-CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "YOURINFO")
+CLIENT_ID = os.environ.get("OPENSKY_CLIENT_ID", "owenhigin@gmail.com-api-client")
+CLIENT_SECRET = os.environ.get("OPENSKY_CLIENT_SECRET", "Nx4YMWTtyhV6yxSOTmbg6FcqiuEgbxTN")
 
 # CUT WINDOW: 6 months for the test run.
 # Once we know this works, we can expand to 12 months (with pooled accounts).
