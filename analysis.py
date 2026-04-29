@@ -55,7 +55,7 @@ with tab1:
         cols = st.columns(len(profiles))
         for i, (_, row) in enumerate(profiles.iterrows()):
             with cols[i]:
-                st.markdown(f"### {row.get('ticker', row['company_name'])}")
+                st.markdown(f"### {row['company_name']}")
                 car = row["mean_car"]
                 st.metric("Mean CAR", f"{car:+.2%}" if pd.notna(car) else "N/A")
                 st.metric("Avg Flights (30d)", f"{row['avg_flights_30d']:.1f}"
@@ -69,11 +69,11 @@ with tab1:
 
         with col1:
             fig = px.bar(
-                profiles, x="ticker", y="mean_car",
+                profiles, x="company_name", y="mean_car",
                 color="mean_car",
                 color_continuous_scale=["red", "white", "green"],
                 title="Mean CAR by Firm",
-                labels={"mean_car": "Mean CAR[-1,+1]", "ticker": ""},
+                labels={"mean_car": "Mean CAR[-1,+1]", "company_name": ""},
                 text=profiles["mean_car"].apply(
                     lambda v: f"{v:+.2%}" if pd.notna(v) else ""),
             )
@@ -84,10 +84,11 @@ with tab1:
         with col2:
             fig = px.scatter(
                 profiles, x="avg_flights_30d", y="mean_car",
-                text="ticker",
+                text="company_name",
                 title="Avg Pre-Event Flights vs Mean CAR",
                 labels={"avg_flights_30d": "Avg Flights (30d pre-event)",
-                        "mean_car": "Mean CAR[-1,+1]"},
+                        "mean_car": "Mean CAR[-1,+1]",
+                        "company_name": ""},
             )
             fig.update_traces(textposition="top center", marker_size=12)
             fig.add_hline(y=0, line_dash="dash", line_color="gray")
