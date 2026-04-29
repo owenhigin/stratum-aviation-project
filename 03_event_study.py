@@ -30,9 +30,26 @@ from datetime import datetime, timedelta
 # ---- CONFIG ----
 # Map company names to tickers (must match what's in events.csv)
 TICKER_MAP = {
-    "NEWELL BRANDS INC.": "NWL",
-    "SKECHERS USA INC":   "SKX",
-    "Macy's, Inc.":       "M",
+    "Liberty Media Corp": "FWONA",
+    "Newell Brands Inc": "NWL",
+    "Workday Inc": "WDAY",
+    "CenterPoint Energy Inc": "CNP",
+    "Great Southern Bancorp Inc": "GSBC",
+    "Life Time Group Holdings": "LTH",
+    "Macy's Inc": "M",
+    "Murphy USA Inc": "MUSA",
+    "Nordstrom Inc": "JWN",
+    "Skechers USA Inc": "SKX",
+}
+
+# Tickers that yfinance can no longer fetch (e.g. delisted following a
+# go-private transaction). For these, we load price data from local CSV files
+# downloaded from investing.com. Files must have columns:
+#   Date, Price, Open, High, Low, Vol., Change %
+# with Date in M/D/YY format.
+LOCAL_PRICE_FALLBACK = {
+    "JWN": "JWN.csv",   # Nordstrom - went private 2025
+    "SKX": "SKX.csv",   # Skechers  - went private 2025
 }
 
 # Pull a wide window so we have estimation-window data for every event
@@ -52,16 +69,65 @@ FLIGHT_WINDOW_30D = 30
 FLIGHT_WINDOW_7D = 7
 
 
+def load_local_price_csv(ticker: str, path: str) -> pd.Series:
+    """Load price data from a local investing.com-format CSV.
+
+    Expected columns: Date, Price, Open, High, Low, Vol., Change %
+    Date format: M/D/YY (e.g. 4/1/25)
+    Data is typically in descending date order; we sort ascending.
+    """
+    p = Path(path)
+    if not p.exists():
+        print(f"    WARNING: local fallback file {path} not found for {ticker}")
+        return pd.Series(dtype=float, name=ticker)
+
+    df = pd.read_csv(p, encoding="utf-8-sig")
+    df["Date"] = pd.to_datetime(df["Date"], format="%m/%d/%y", errors="coerce")
+    df = df.dropna(subset=["Date"]).sort_values("Date")
+    series = df.set_index("Date")["Price"].astype(float)
+    series.name = ticker
+    print(f"    loaded {len(series)} rows for {ticker} from {path}")
+    return series
+
+
 def pull_prices() -> pd.DataFrame:
-    """Pull daily closing prices for all focal firms + market."""
-    tickers = list(TICKER_MAP.values()) + [MARKET_TICKER]
-    print(f"Pulling prices for {tickers} from {PRICE_START} to {PRICE_END}...")
-    data = yf.download(tickers, start=PRICE_START, end=PRICE_END,
+    """Pull daily closing prices for all focal firms + market.
+
+    Uses yfinance for most tickers. For tickers in LOCAL_PRICE_FALLBACK
+    (e.g. delisted), loads from local CSV files instead.
+    """
+    yfinance_tickers = [
+        t for t in list(TICKER_MAP.values()) + [MARKET_TICKER]
+        if t not in LOCAL_PRICE_FALLBACK
+    ]
+    print(f"Pulling prices for {yfinance_tickers} from {PRICE_START} to {PRICE_END}...")
+    data = yf.download(yfinance_tickers, start=PRICE_START, end=PRICE_END,
                        auto_adjust=False, progress=False)
-    # yfinance returns multi-index columns (field, ticker); we want adjusted close
-    prices = data["Adj Close"].copy()
+
+    # If only one ticker, yfinance returns flat columns; standardize
+    if len(yfinance_tickers) == 1:
+        prices = data[["Adj Close"]].copy()
+        prices.columns = yfinance_tickers
+    else:
+        prices = data["Adj Close"].copy()
+
     prices.index = pd.to_datetime(prices.index).tz_localize(None)
-    print(f"  pulled {len(prices)} trading days x {len(prices.columns)} tickers")
+
+    # Add local fallback prices
+    for ticker, path in LOCAL_PRICE_FALLBACK.items():
+        if ticker in TICKER_MAP.values():  # only if it's actually used
+            print(f"  Loading {ticker} from local file (yfinance unavailable)...")
+            local_series = load_local_price_csv(ticker, path)
+            if len(local_series) > 0:
+                # Reindex to match the main price dataframe's date index,
+                # forward-filling so weekends/holidays don't break things
+                local_series = local_series.reindex(
+                    prices.index, method=None
+                )
+                prices[ticker] = local_series
+
+    print(f"  final price matrix: {len(prices)} trading days x "
+          f"{len(prices.columns)} tickers")
     return prices
 
 
@@ -152,6 +218,9 @@ def build_flight_features(flights: pd.DataFrame, company: str,
             "flights_to_target_region", "flight_count_above_baseline"
         ]}
 
+    # Normalize for case/punctuation differences between events.csv
+    # (e.g. "Newell Brands Inc") and flights_enriched.csv
+    # (e.g. "NEWELL BRANDS INC.")
     def _norm(s):
         return str(s).upper().strip().rstrip(".").rstrip()
     target_norm = _norm(company)
@@ -211,18 +280,14 @@ def main():
 
     events["filing_date"] = pd.to_datetime(events["filing_date"])
 
-    # Load flights from per-firm cleaned CSVs
-    cleaned_files = [
-        Path("raw_flights/Clean Data/Newell_Brands_cleaned.csv"),
-        Path("raw_flights/Clean Data/Skechers_cleaned.csv"),
-        Path("raw_flights/Clean Data/Macys_cleaned.csv"),
-    ]
-    parts = [pd.read_csv(f) for f in cleaned_files if f.exists()]
-    flights = pd.concat(parts, ignore_index=True) if parts else None
-    if flights is not None:
-        print(f"Loaded {len(flights)} flights across {flights['company_name'].nunique()} firms")
+    # Load flights (optional — if not yet available, features will be NaN)
+    flights_path = Path("flights_enriched.csv")
+    flights = None
+    if flights_path.exists():
+        flights = pd.read_csv(flights_path)
+        print(f"Loaded {len(flights)} flights from {flights_path}")
     else:
-        print("WARNING: No cleaned flight files found. Flight features will be NaN.")
+        print(f"WARNING: {flights_path} not found. Flight features will be NaN.")
 
     # Pull prices and compute returns
     prices = pull_prices()
@@ -230,11 +295,17 @@ def main():
     returns = compute_returns(prices)
     print(f"Computed daily returns: {returns.shape}")
 
+    # Build a normalized ticker lookup so small differences in company_name
+    # (e.g. "NEWELL BRANDS INC." vs "Newell Brands Inc") still resolve correctly
+    def _norm_company(s):
+        return str(s).upper().strip().rstrip(".").rstrip()
+    ticker_lookup = {_norm_company(k): v for k, v in TICKER_MAP.items()}
+
     # Run event study for each event
     results = []
     for _, row in events.iterrows():
         company = row["company_name"]
-        ticker = TICKER_MAP.get(company)
+        ticker = ticker_lookup.get(_norm_company(company))
         if ticker is None:
             print(f"  skip: no ticker mapping for {company}")
             continue
