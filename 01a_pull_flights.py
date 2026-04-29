@@ -15,10 +15,10 @@ from pathlib import Path
 # ================================================================
 # CONFIG — update these for every run
 # ================================================================
-CLIENT_ID     = "  "
-CLIENT_SECRET = "  "
+CLIENT_ID     = "i8ahr-api-client"
+CLIENT_SECRET = "D4RTL2Ye3A2x63tbqfAhuVQy1I8AX6eQ"
 
-COMPANY       = "Macy's"          # partial name match, case-insensitive
+COMPANY       = "Workday"        # partial name match, case-insensitive
 
 START_DATE    = datetime(2024,  10, 1, tzinfo=timezone.utc)
 END_DATE      = datetime(2025,  4,  1, tzinfo=timezone.utc)

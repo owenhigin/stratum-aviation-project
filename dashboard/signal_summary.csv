@@ -1,0 +1,6 @@
+event_type,n_above_baseline,pct_positive_when_above,n_below_baseline,pct_positive_when_below,hit_rate_lift_pp
+All,11,36.36363636363637,28,42.857142857142854,-6.49350649350649
+Earnings,4,0.0,11,63.63636363636363,-63.63636363636363
+Material_Agreement,1,0.0,3,0.0,0.0
+Executive_Change,2,0.0,8,37.5,-37.5
+Other,4,100.0,6,33.33333333333333,66.66666666666667

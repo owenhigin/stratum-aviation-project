@@ -97,20 +97,25 @@ def main():
 
     for csv in firm_csvs:
         tail = csv.stem
-        out  = RAW_DIR / f"{tail}_cleaned.csv"
-
-        if out.exists():
-            print(f"{tail}: already cleaned — skipping")
-            continue
 
         flights = pd.read_csv(csv)
         if flights.empty:
             print(f"{tail}: empty — skipping")
             continue
 
+        # Build filename from company name
+        company  = flights["company_name"].iloc[0]
+        safe     = re.sub(r"[^A-Za-z0-9]+", "_", company).strip("_")
+        out      = RAW_DIR / "Clean Data" / f"{safe}_cleaned.csv"
+        out.parent.mkdir(exist_ok=True)
+
+        if out.exists():
+            print(f"{tail} ({company}): already cleaned — skipping")
+            continue
+
         cleaned = enrich(flights, airports.copy())
         cleaned.to_csv(out, index=False)
-        print(f"{tail}: {len(cleaned)} flights -> {out}")
+        print(f"{tail}: {len(cleaned)} flights -> {out.name}")
 
         print(f"  Top destinations:")
         print(cleaned["arr_city"].value_counts().head(5).to_string())
